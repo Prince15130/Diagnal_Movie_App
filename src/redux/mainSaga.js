@@ -1,6 +1,6 @@
 import { all } from "redux-saga/effects";
-import { pokemonListWatcherSaga } from "./modules/movieList";
+import { movieListWatcherSaga } from "./modules/movieList";
 
 export default function* rootSaga() {
-  yield all([pokemonListWatcherSaga()]);
+  yield all([movieListWatcherSaga()]);
 }

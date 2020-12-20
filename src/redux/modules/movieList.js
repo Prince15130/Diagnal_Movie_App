@@ -1,47 +1,42 @@
 import { call, delay, put, takeEvery, takeLatest } from "redux-saga/effects";
-import {
-  getPokemonList,
-  loadMorePokemonList,
-} from "../../api/pokemonEndpoints";
+import { getMovieList, loadMoreMovieList } from "../../api/movieEndpoints";
 
 // Actions types
-const FETCH_POKEMON_LIST = "pokemon-frontend/pokemon/FETCH_POKEMON_LIST";
-const FETCH_POKEMON_LIST_SUCCESS =
-  "pokemon-frontend/pokemon/FETCH_POKEMON_LIST_SUCCESS";
-const FETCH_POKEMON_LIST_FAILURE =
-  "pokemon-frontend/pokemon/FETCH_POKEMON_LIST_FAILURE";
-const DISPLAY_MORE_BEGIN = "pokemon-frontend/pokemon/DISPLAY_MORE_BEGIN";
-const DISPLAY_MORE_END = "pokemon-frontend/pokemon/DISPLAY_MORE_END";
-const LOAD_MORE_POKEMON_SUCCEED =
-  "pokemon-frontend/pokemon/LOAD_MORE_POKEMON_SUCCEED";
-const LOAD_MORE_POKEMON_FAILED =
-  "pokemon-frontend/pokemon/LOAD_MORE_POKEMON_FAILED";
-const LOAD_MORE_POKEMON = "pokemon-frontend/pokemon/LOAD_MORE_POKEMON";
-const SEARCH_POKEMON = "pokemon-frontend/pokemon/SEARCH_POKEMON";
+const FETCH_MOVIE_LIST = "movie-frontend/movie/FETCH_MOVIE_LIST";
+const FETCH_MOVIE_LIST_SUCCESS =
+  "movie-frontend/movie/FETCH_MOVIE_LIST_SUCCESS";
+const FETCH_MOVIE_LIST_FAILURE =
+  "movie-frontend/movie/FETCH_MOVIE_LIST_FAILURE";
+const DISPLAY_MORE_BEGIN = "movie-frontend/movie/DISPLAY_MORE_BEGIN";
+const DISPLAY_MORE_END = "movie-frontend/movie/DISPLAY_MORE_END";
+const LOAD_MORE_MOVIE_SUCCEED = "movie-frontend/movie/LOAD_MORE_MOVIE_SUCCEED";
+const LOAD_MORE_MOVIE_FAILED = "movie-frontend/movie/LOAD_MORE_MOVIE_FAILED";
+const LOAD_MORE_MOVIE = "movie-frontend/movie/LOAD_MORE_MOVIE";
+const SEARCH_MOVIE = "movie-frontend/movie/SEARCH_MOVIE";
 
-const initialState = { pokemonList: [], isLoading: false, error: "" };
+const initialState = { movieList: [], isLoading: false, error: "" };
 
 // Reducer
 export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
-    case FETCH_POKEMON_LIST:
+    case FETCH_MOVIE_LIST:
       return {
         ...state,
         isLoading: true,
       };
-    case FETCH_POKEMON_LIST_SUCCESS:
+    case FETCH_MOVIE_LIST_SUCCESS:
       const results = action.payload.page.items.content;
-      const pokemonResultsList = results.map((pokemon) => {
-        // const id = parseInt(getId(pokemon.url), 10);
-        const id = pokemon.name;
-        return { id, ...pokemon };
+      const movieResultsList = results.map((movie) => {
+        // const id = parseInt(getId(movie.url), 10);
+        const id = movie.name;
+        return { id, ...movie };
       });
       return {
         ...state,
-        pokemonList: pokemonResultsList,
+        movieList: movieResultsList,
         isLoading: false,
       };
-    case FETCH_POKEMON_LIST_FAILURE:
+    case FETCH_MOVIE_LIST_FAILURE:
       return {
         ...state,
         error: action.payload,
@@ -57,33 +52,31 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         isLoading: false,
       };
-    case LOAD_MORE_POKEMON:
+    case LOAD_MORE_MOVIE:
       return {
         ...state,
         isLoading: true,
       };
-    case LOAD_MORE_POKEMON_SUCCEED:
-      const newPokemonList = action.payload.page.items.content.map(
-        (pokemon) => {
-          const id = pokemon.name;
-          return { id, ...pokemon };
-        }
-      );
-      const { pokemonList } = state;
+    case LOAD_MORE_MOVIE_SUCCEED:
+      const newMovieList = action.payload.page.items.content.map((movie) => {
+        const id = movie.name;
+        return { id, ...movie };
+      });
+      const { movieList } = state;
       return {
         ...state,
-        pokemonList: [...pokemonList, ...newPokemonList],
+        movieList: [...movieList, ...newMovieList],
         isLoading: false,
       };
-    case LOAD_MORE_POKEMON_FAILED:
+    case LOAD_MORE_MOVIE_FAILED:
       return {
         ...state,
         error: action.payload,
         isLoading: false,
       };
-    case SEARCH_POKEMON:
-      const { pokemonListfilter } = state;
-      const copyList = [...state.pokemonList];
+    case SEARCH_MOVIE:
+      const { movieListfilter } = state;
+      const copyList = [...state.movieList];
       console.log(action.payload);
       const filterData = copyList.filter((list) =>
         list.name.toLowerCase().includes(action.payload.toLowerCase())
@@ -91,7 +84,7 @@ export default function reducer(state = initialState, action = {}) {
 
       return {
         ...state,
-        pokemonList: filterData,
+        movieList: filterData,
         isLoading: false,
       };
     default:
@@ -100,69 +93,69 @@ export default function reducer(state = initialState, action = {}) {
 }
 
 // Action Creators
-export function loadPokemonList(payload) {
-  return { type: FETCH_POKEMON_LIST, payload };
+export function loadMovieList(payload) {
+  return { type: FETCH_MOVIE_LIST, payload };
 }
 
-export function loadPokemonListSucceed(payload) {
-  return { type: FETCH_POKEMON_LIST_SUCCESS, payload };
+export function loadMovieListSucceed(payload) {
+  return { type: FETCH_MOVIE_LIST_SUCCESS, payload };
 }
 
-export function loadPokemonListFailed(payload) {
-  return { type: FETCH_POKEMON_LIST_FAILURE, payload };
+export function loadMovieListFailed(payload) {
+  return { type: FETCH_MOVIE_LIST_FAILURE, payload };
 }
 
-export function displayMorePokemon(payload) {
+export function displayMoreMovie(payload) {
   return { type: DISPLAY_MORE_BEGIN, payload };
 }
 
-export function displayMorePokemonEnd() {
+export function displayMoreMovieEnd() {
   return { type: DISPLAY_MORE_END };
 }
-export function loadMorePokemonSucceed(payload) {
-  return { type: LOAD_MORE_POKEMON_SUCCEED, payload };
+export function loadMoreMovieSucceed(payload) {
+  return { type: LOAD_MORE_MOVIE_SUCCEED, payload };
 }
 
-export function loadMorePokemonFailed(payload) {
-  return { type: LOAD_MORE_POKEMON_FAILED, payload };
+export function loadMoreMovieFailed(payload) {
+  return { type: LOAD_MORE_MOVIE_FAILED, payload };
 }
 
-export function loadMorePokemon(payload) {
-  return { type: LOAD_MORE_POKEMON, payload };
+export function loadMoreMovie(payload) {
+  return { type: LOAD_MORE_MOVIE, payload };
 }
-export function searchPokemon(payload) {
-  return { type: SEARCH_POKEMON, payload };
+export function searchMovie(payload) {
+  return { type: SEARCH_MOVIE, payload };
 }
 
-export function* fetchPokemonListSaga() {
+export function* fetchMovieListSaga() {
   try {
-    const response = yield call(getPokemonList, 0);
+    const response = yield call(getMovieList, 0);
     //console.table(response);
-    yield put(loadPokemonListSucceed(response));
+    yield put(loadMovieListSucceed(response));
   } catch (error) {
-    yield put(loadPokemonListFailed(error.message));
+    yield put(loadMovieListFailed(error.message));
   }
 }
 
-function* displayMorePokemonSaga(action) {
+function* displayMoreMovieSaga(action) {
   const { payload } = action;
   try {
-    const response = yield call(loadMorePokemonList, payload + 1);
+    const response = yield call(loadMoreMovieList, payload + 1);
     yield delay(1000);
-    yield put(loadMorePokemonSucceed(response));
+    yield put(loadMoreMovieSucceed(response));
   } catch (error) {
-    yield put(loadMorePokemonFailed(error.message));
+    yield put(loadMoreMovieFailed(error.message));
   }
 }
 
-function* searchPokemonSaga(action) {
-  const searchResponse = yield call(searchPokemon, action.payload);
+function* searchMovieSaga(action) {
+  const searchResponse = yield call(searchMovie, action.payload);
   yield delay(1000);
-  yield put(loadPokemonListSucceed(searchResponse));
+  yield put(loadMovieListSucceed(searchResponse));
 }
 
-export function* pokemonListWatcherSaga() {
-  yield takeLatest(FETCH_POKEMON_LIST, fetchPokemonListSaga);
-  yield takeEvery(LOAD_MORE_POKEMON, displayMorePokemonSaga);
-  //yield takeEvery(SEARCH_POKEMON, searchPokemonSaga);
+export function* movieListWatcherSaga() {
+  yield takeLatest(FETCH_MOVIE_LIST, fetchMovieListSaga);
+  yield takeEvery(LOAD_MORE_MOVIE, displayMoreMovieSaga);
+  //yield takeEvery(SEARCH_MOVIE, searchMovieSaga);
 }
